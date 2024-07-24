@@ -40,6 +40,10 @@ class Gameboard {
             this.gameboard[x][y] = 'miss';
         }
     }
+
+    allShipsSunk() {
+        return this.ships.every(ship => ship.isSunk());
+    }
 }
 
 
