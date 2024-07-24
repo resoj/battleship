@@ -41,3 +41,17 @@ test('receiveAttack misses a ship', () => {
     expect(gameboard.gameboard[5][5]).toBe('miss');
     expect(ship.hitCount).toBe(0);
 });
+
+test('check allShipsSunk', () => {
+    gameboard.ships.forEach(ship => {
+        while(!ship.isSunk()) {
+            ship.hit();
+        }
+    })
+    
+    expect(gameboard.allShipsSunk()).toBe(true);
+});
+
+test('check !allShipsSunk', () => {
+    expect(gameboard.allShipsSunk()).toBe(false);
+});
