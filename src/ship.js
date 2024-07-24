@@ -1,7 +1,11 @@
-export class Ship {
-    constructor(shipLength) {
-        this.shipLength = shipLength;
+class Ship {
+    constructor(name, length) {
+        this.name = name;
+        this.length = length;
+        this.coordinates = [undefined, undefined];
+        this.horizontal = true;
         this.hitCount = 0;
+        this.sunk = false;
     }
 
     hit() {
@@ -9,9 +13,8 @@ export class Ship {
     }
 
     isSunk() {
-        if(this.hitCount === this.shipLength) {
-            return true;
-        }
-        return false;
+        return this.hitCount === this.length;
     }
 }
+
+module.exports = Ship;
