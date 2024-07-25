@@ -5,3 +5,5 @@ class Player {
         this.gameboard = new Gameboard();
     }
 }
+
+module.exports = Player;
