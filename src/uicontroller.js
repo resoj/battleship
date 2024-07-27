@@ -17,7 +17,7 @@ class UIController {
 
         const startButton = document.createElement('button');
         startButton.classList.add('start-button');
-        startButton.textContent = 'START';
+        startButton.textContent = 'PLAY';
 
         startButton.addEventListener('click', () => {
             startButton.style.display = 'none';
@@ -65,6 +65,13 @@ class UIController {
 
     loadGameBoards() {
 
+        const gameArea = document.getElementById('game-area');
+        const playerNames = gameArea.querySelectorAll('p');
+        
+        playerNames.forEach(playerName => {
+            playerName.style.display = 'flex';
+        })
+
         const playerOneGameboard = this.playerOne.gameboard;
         const playerTwoGameboard = this.playerTwo.gameboard;
 
@@ -88,6 +95,7 @@ class UIController {
                 playerOneBoardArea.appendChild(gridCell);
             })
         })
+
 
         playerTwoGameboard.gameboard.forEach(boardRow => {
             boardRow.forEach(boardElement => {
