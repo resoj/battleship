@@ -8,6 +8,26 @@ class UIController {
         // this.playerOneTurn = null;
     }
 
+    controller() {
+        this.loadStartScreen();
+    }
+
+    loadStartScreen() {
+        const gameArea = document.getElementById('game-area');
+
+        const startButton = document.createElement('button');
+        startButton.classList.add('start-button');
+        startButton.textContent = 'START';
+
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none';
+            gameArea.style.display = 'grid';
+            this.loadGameBoards();
+        })
+
+        gameArea.appendChild(startButton);
+    }
+
     getCoordinateAvailability(playerGameboard, ship, x, y) {
         const isOutOfBounds = (x, y) => x < 0 || x > 9 || y < 0 || y > 9;
         
@@ -44,12 +64,18 @@ class UIController {
     }
 
     loadGameBoards() {
+
         const playerOneGameboard = this.playerOne.gameboard;
         const playerTwoGameboard = this.playerTwo.gameboard;
 
         this.randomizeShipCoordinates(playerOneGameboard);
+        this.randomizeShipCoordinates(playerTwoGameboard);
         
-        const playerOneBoardArea = document.getElementById('player-one-board-area')
+        const playerOneBoardArea = document.getElementById('player-one-board-area');
+        const playerTwoBoardArea = document.getElementById('player-two-board-area');
+
+        playerOneBoardArea.style.display = 'grid';
+        playerTwoBoardArea.style.display = 'grid';
 
         playerOneGameboard.gameboard.forEach(boardRow => {
             boardRow.forEach(boardElement => {
@@ -62,6 +88,22 @@ class UIController {
                 playerOneBoardArea.appendChild(gridCell);
             })
         })
+
+        playerTwoGameboard.gameboard.forEach(boardRow => {
+            boardRow.forEach(boardElement => {
+                const gridCell = document.createElement('div');
+                gridCell.classList.add('grid-cell');
+                playerTwoBoardArea.appendChild(gridCell);
+            })
+        })
+    }
+
+    resetGameBoards() {
+        const playerOneBoardArea = document.getElementById('player-one-board-area');
+
+        while(playerOneBoardArea.firstChild) {
+            playerOneBoardArea.removeChild(playerOneBoardArea.firstChild);
+        }
     }
 }
 
