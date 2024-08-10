@@ -29,34 +29,46 @@ class UIController {
     }
 
     getCoordinateAvailability(playerGameboard, ship, x, y) {
-        const isOutOfBounds = (x, y) => x < 0 || x > 9 || y < 0 || y > 9;
-        
-        if (ship.horizontal) {
-            for (let i = 0; i < ship.length; i++) {
-                if (isOutOfBounds(x + i, y) || playerGameboard[x + i][y] !== null) {
+        const isOutOfBounds = (x, y, ship, horizontal) => {
+            if (horizontal) {
+                return x < 0 || x + ship.length > 10 || y < 0 || y > 9;
+            } else {
+                return x < 0 || x > 9 || y < 0 || y + ship.length > 10;
+            }
+        };
+    
+        if (isOutOfBounds(x, y, ship, ship.horizontal)) {
+            return false;
+        }
+    
+        for (let i = 0; i < ship.length; i++) {
+            if (ship.horizontal) {
+                if (playerGameboard[x + i][y] !== null) {
                     return false;
                 }
-            }
-        } else {
-            for (let i = 0; i < ship.length; i++) {
-                if (isOutOfBounds(x, y + i) || playerGameboard[x][y + i] !== null) {
+            } else {
+                if (playerGameboard[x][y + i] !== null) {
                     return false;
                 }
             }
         }
+    
         return true;
     }
     
     randomizeShipCoordinates(playerGameboard) {
         const getRandomCoordinate = () => Math.floor(Math.random() * 10);
+        const getRandomOrientation = () => Math.random() >= .5;
     
         playerGameboard.ships.forEach(ship => {
-            let x, y;
+            let x, y, horizontal;
     
             // Find valid coordinates
             do {
                 x = getRandomCoordinate();
                 y = getRandomCoordinate();
+                horizontal = getRandomOrientation();
+                ship.horizontal = horizontal;
             } while (!this.getCoordinateAvailability(playerGameboard.gameboard, ship, x, y));
     
             playerGameboard.placeShip(ship, x, y);
@@ -86,7 +98,7 @@ class UIController {
 
         playerOneGameboard.gameboard.forEach(boardRow => {
             boardRow.forEach(boardElement => {
-                const gridCell = document.createElement('div');
+                const gridCell = document.createElement('button');
                 gridCell.classList.add('grid-cell');
                 if(boardElement instanceof Ship) {
                     gridCell.style.backgroundColor = 'gray';
@@ -99,18 +111,31 @@ class UIController {
 
         playerTwoGameboard.gameboard.forEach(boardRow => {
             boardRow.forEach(boardElement => {
-                const gridCell = document.createElement('div');
+                const gridCell = document.createElement('button');
                 gridCell.classList.add('grid-cell');
                 playerTwoBoardArea.appendChild(gridCell);
+                gridCell.addEventListener('click', () => {
+                    if(boardElement === null) {
+                        gridCell.style.backgroundColor = 'gray';
+                    }
+                    else {
+                        boardElement.hit();
+                        gridCell.style.backgroundColor = 'red';
+                    }
+                });
             })
         })
+
+        console.log(playerOneGameboard.gameboard);
     }
 
     resetGameBoards() {
         const playerOneBoardArea = document.getElementById('player-one-board-area');
+        const playerTwoBoardArea = document.getElementById('player-two-board-area');
 
-        while(playerOneBoardArea.firstChild) {
+        while(playerOneBoardArea.firstChild && playerTwoBoardArea.firstChild) {
             playerOneBoardArea.removeChild(playerOneBoardArea.firstChild);
+            playerTwoBoardArea.removeChild(playerTwoBoardArea.firstChild);
         }
     }
 }

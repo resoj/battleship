@@ -17,6 +17,7 @@ class Gameboard {
 
     placeShip(ship, x, y) {
         ship.coordinates = [x,y];
+
         if(ship.horizontal) {
             for(let i = 0; i < ship.length; i++) {
                 this.gameboard[x + i][y] = ship;

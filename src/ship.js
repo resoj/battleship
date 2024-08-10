@@ -3,7 +3,7 @@ class Ship {
         this.name = name;
         this.length = length;
         this.coordinates = [undefined, undefined];
-        this.horizontal = true;
+        this.horizontal = false;
         this.hitCount = 0;
         this.sunk = false;
     }
