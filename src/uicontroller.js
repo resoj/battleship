@@ -83,32 +83,41 @@ class UIController {
         const boardArea = document.getElementById(boardId);
         boardArea.style.display = 'grid';
 
-        gameboard.gameboard.forEach(row => {
-            row.forEach(cell => {
-                const gridCell = this.createGridCell(cell, isPlayer);
+        gameboard.gameboard.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                const gridCell = this.createGridCell(cell, isPlayer, rowIndex, colIndex);
                 boardArea.appendChild(gridCell);
             });
         });
     }
 
-    createGridCell(cell, isPlayer) {
+    createGridCell(cell, isPlayer, rowIndex, colIndex) {
         const gridCell = document.createElement('button');
         gridCell.classList.add('grid-cell');
-        if (isPlayer && cell instanceof Ship) {
-            gridCell.textContent = cell.name;
-            gridCell.style.backgroundColor = 'var(--ship-color)';
-            gridCell.style.border = 'none';
-        }
-        if (!isPlayer) {
-            gridCell.addEventListener('click', () => this.handleAttack(cell, gridCell));
+        gridCell.dataset.row = rowIndex;
+        gridCell.dataset.col = colIndex;
+
+        if (isPlayer) {
+            if (cell instanceof Ship) {
+                gridCell.textContent = cell.name;
+                gridCell.style.backgroundColor = 'var(--ship-color)';
+                gridCell.style.border = 'none';
+            }
+        } else {
+            gridCell.addEventListener('click', () => this.handleAttack(rowIndex, colIndex, gridCell));
         }
         return gridCell;
     }
 
-    handleAttack(cell, gridCell) {
-        const color = cell ? this.markHit(cell) : this.markMiss();
-        gridCell.style.backgroundColor = color;
-        this.randomEnemyAttack();
+    handleAttack(x, y, gridCell) {
+        if (!gridCell.classList.contains('attacked')) {
+            const cell = this.playerTwo.gameboard.gameboard[x][y];
+            const color = cell ? this.markHit(cell) : this.markMiss();
+            gridCell.style.backgroundColor = color;
+            gridCell.classList.add('attacked');
+            this.playerTwo.gameboard.gameboard[x][y] = cell ? 'hit' : 'miss';
+            this.randomEnemyAttack();
+        }
     }
 
     markHit(ship) {
@@ -123,17 +132,28 @@ class UIController {
     randomEnemyAttack() {
         let x, y;
         const getRandomCoordinate = () => Math.floor(Math.random() * 10);
+        let cell;
+    
         do {
             x = getRandomCoordinate();
             y = getRandomCoordinate();
-        } while (this.playerOne.gameboard.gameboard[x][y] !== null);
+            cell = this.playerOne.gameboard.gameboard[x][y];
+        } while (cell === 'hit' || cell === 'miss');
+    
         this.receiveAttack(x, y);
     }
 
     receiveAttack(x, y) {
         const cell = this.playerOne.gameboard.gameboard[x][y];
         const color = cell ? this.markHit(cell) : this.markMiss();
-        document.querySelector(`#player-one-board-area .grid-cell:nth-child(${x * 10 + y + 1})`).style.backgroundColor = color;
+        const gridCell = document.querySelector(`#player-one-board-area .grid-cell[data-row="${x}"][data-col="${y}"]`);
+    
+        if (gridCell && !gridCell.classList.contains('attacked')) {
+            gridCell.classList.add('attacked');
+            gridCell.style.backgroundColor = color;
+    
+            this.playerOne.gameboard.gameboard[x][y] = cell ? 'hit' : 'miss';
+        }
     }
 
     resetGameBoards() {
