@@ -116,7 +116,12 @@ class UIController {
             gridCell.style.backgroundColor = color;
             gridCell.classList.add('attacked');
             this.playerTwo.gameboard.gameboard[x][y] = cell ? 'hit' : 'miss';
-            this.randomEnemyAttack();
+
+            if (this.checkAllShipsSunk(this.playerTwo.gameboard)) {
+                this.declareWinner(this.playerOne);
+            } else {
+                this.randomEnemyAttack();
+            }
         }
     }
 
@@ -133,13 +138,13 @@ class UIController {
         let x, y;
         const getRandomCoordinate = () => Math.floor(Math.random() * 10);
         let cell;
-    
+
         do {
             x = getRandomCoordinate();
             y = getRandomCoordinate();
             cell = this.playerOne.gameboard.gameboard[x][y];
         } while (cell === 'hit' || cell === 'miss');
-    
+
         this.receiveAttack(x, y);
     }
 
@@ -147,13 +152,46 @@ class UIController {
         const cell = this.playerOne.gameboard.gameboard[x][y];
         const color = cell ? this.markHit(cell) : this.markMiss();
         const gridCell = document.querySelector(`#player-one-board-area .grid-cell[data-row="${x}"][data-col="${y}"]`);
-    
+
         if (gridCell && !gridCell.classList.contains('attacked')) {
             gridCell.classList.add('attacked');
             gridCell.style.backgroundColor = color;
-    
+
             this.playerOne.gameboard.gameboard[x][y] = cell ? 'hit' : 'miss';
+
+            if (this.checkAllShipsSunk(this.playerOne.gameboard)) {
+                this.declareWinner(this.playerTwo);
+            }
         }
+    }
+
+    checkAllShipsSunk(playerGameboard) {
+        return playerGameboard.ships.every(ship => ship.isSunk());
+    }
+
+    declareWinner(winner) {
+        this.disableAllButtons();
+        
+        const footer = document.getElementById('footer');
+        footer.innerHTML = ''; 
+    
+        const winnerMessage = document.createElement('div');
+        winnerMessage.classList.add('winner-message');
+        winnerMessage.textContent = `${winner === this.playerOne ? 'Player One' : 'Player Two'} Wins!`;
+
+        const playAgainButton = this.createButton('Play Again', ['play-again-button']);
+        playAgainButton.addEventListener('click', () => {
+            this.resetGameBoards();
+            this.setupGameBoards();
+        });
+    
+        footer.appendChild(winnerMessage);
+        footer.appendChild(playAgainButton);
+    }
+
+    disableAllButtons() {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => button.disabled = true);
     }
 
     resetGameBoards() {

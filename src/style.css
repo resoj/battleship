@@ -1,8 +1,9 @@
 :root {
-    --ocean-color: #1D4E89;
-    --ship-color: #B0B0B0;
-    --hit-color: red;
-    --miss-color: white;
+    --background-color: #0A2463;
+    --ocean-color: #3E92CC;
+    --ship-color: #8B8C89;
+    --hit-color: #D8315B;
+    --miss-color: #FFFAFF;
 }
 
 @font-face {
@@ -18,6 +19,14 @@
 
 body {
     font-family: "ITC Machine Bold", system-ui;
+    background-color: var(--background-color);
+    color: white;
+}
+
+.start-button {
+    font-family: 'ITC Machine Bold';
+    color: white;
+    background-color: black;
 }
 
 
@@ -37,20 +46,26 @@ body {
     margin: 18px;
 }
 
+#header img {
+    min-width: 300px;
+    max-height: 200px;
+}
+
 #game-area {
     display: grid;
-    grid-template: 100px 1fr / 1fr 1fr;
+    grid-template: 100px auto / 1fr 1fr;
     grid-row: 2 / 3;
-    border: 1px solid purple;
     padding: 0px 50px;
     column-gap: 100px;
+    color: white;
+    position: relative;
 }
 
 #game-area > div {
     display: none;
     grid-row: 2 / 3;
     grid-template: repeat(10, minmax(50px, 1fr)) / repeat(10, minmax(50px, 1fr));
-    border: 1px solid green;
+    border: 2px solid black;
 }
 
 #game-area > p {
@@ -76,10 +91,18 @@ body {
 }
 
 .grid-cell {
-    border: 1px solid gray;
+    border: 1px solid black;
     background-color: var(--ocean-color);
 }
 
 .grid-cell:hover {
-    background-color: rgba(128, 128, 128, 0.4)
+    background-color: rgba(128, 128, 128, 0.1)
+}
+
+#footer {
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    padding: 20px;
+    color: white;
 }

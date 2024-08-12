@@ -5,4 +5,4 @@ const UIController = require('./uicontroller');
 
 const uiController = new UIController();
 
-uiController.controller();
+uiController.initialize();
