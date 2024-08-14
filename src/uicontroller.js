@@ -8,20 +8,11 @@ class UIController {
     }
 
     initialize() {
-        this.loadStartScreen();
+        this.startGame();
     }
 
-    loadStartScreen() {
+    startGame() {
         const gameArea = document.getElementById('game-area');
-        const startButton = this.createButton('PLAY', ['start-button']);
-        startButton.addEventListener('click', () => {
-            this.startGame(startButton, gameArea);
-        });
-        gameArea.appendChild(startButton);
-    }
-
-    startGame(startButton, gameArea) {
-        startButton.style.display = 'none';
         gameArea.style.display = 'grid';
         this.displayPlayerNames(gameArea);
         this.setupGameBoards();
@@ -96,7 +87,7 @@ class UIController {
         gridCell.classList.add('grid-cell');
         gridCell.dataset.row = rowIndex;
         gridCell.dataset.col = colIndex;
-
+    
         if (isPlayer) {
             if (cell instanceof Ship) {
                 gridCell.textContent = cell.name;
@@ -182,7 +173,6 @@ class UIController {
         const playAgainButton = this.createButton('Play Again', ['play-again-button']);
         playAgainButton.addEventListener('click', () => {
             this.resetGameBoards();
-            this.setupGameBoards();
         });
     
         footer.appendChild(winnerMessage);
@@ -195,12 +185,20 @@ class UIController {
     }
 
     resetGameBoards() {
+        
         ['player-one-board-area', 'player-two-board-area'].forEach(boardId => {
             const boardArea = document.getElementById(boardId);
             while (boardArea.firstChild) {
                 boardArea.removeChild(boardArea.firstChild);
             }
         });
+    
+        const footer = document.getElementById('footer');
+        footer.innerHTML = '';
+    
+        this.playerOne = new Player();
+        this.playerTwo = new Player();
+        this.startGame();
     }
 }
 
