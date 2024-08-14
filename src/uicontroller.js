@@ -29,6 +29,9 @@ class UIController {
 
         this.renderBoard('player-one-board-area', this.playerOne.gameboard, true);
         this.renderBoard('player-two-board-area', this.playerTwo.gameboard, false);
+
+        const footer = document.getElementById('footer');
+        footer.textContent = "Click on the opponent's board to send an attack!"
     }
 
     createButton(text, classNames = []) {
@@ -90,9 +93,7 @@ class UIController {
     
         if (isPlayer) {
             if (cell instanceof Ship) {
-                gridCell.textContent = cell.name;
                 gridCell.style.backgroundColor = 'var(--ship-color)';
-                gridCell.style.border = 'none';
             }
         } else {
             gridCell.addEventListener('click', () => this.handleAttack(rowIndex, colIndex, gridCell));
@@ -101,6 +102,8 @@ class UIController {
     }
 
     handleAttack(x, y, gridCell) {
+        const footer = document.getElementById('footer');
+        footer.innerHTML = '';
         if (!gridCell.classList.contains('attacked')) {
             const cell = this.playerTwo.gameboard.gameboard[x][y];
             const color = cell ? this.markHit(cell) : this.markMiss();
