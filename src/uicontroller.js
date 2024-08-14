@@ -6,6 +6,8 @@ class UIController {
         this.playerOne = new Player();
         this.playerTwo = new Player();
         this.firstAttackMade = false;
+        this.footer = document.getElementById('footer');
+        this.gameArea = document.getElementById('game-area');
     }
 
     initialize() {
@@ -13,26 +15,23 @@ class UIController {
     }
 
     startGame() {
-        const gameArea = document.getElementById('game-area');
-        gameArea.style.display = 'grid';
-        this.displayPlayerNames(gameArea);
+        this.gameArea.style.display = 'grid';
+        this.displayPlayerNames();
         this.setupGameBoards();
     }
 
-    displayPlayerNames(gameArea) {
-        const playerNames = gameArea.querySelectorAll('p');
+    displayPlayerNames() {
+        const playerNames = this.gameArea.querySelectorAll('p');
         playerNames.forEach(playerName => playerName.style.display = 'flex');
     }
 
     setupGameBoards() {
-        this.randomizeShips(this.playerOne.gameboard);
-        this.randomizeShips(this.playerTwo.gameboard);
+        [this.playerOne, this.playerTwo].forEach(player => this.randomizeShips(player.gameboard));
 
         this.renderBoard('player-one-board-area', this.playerOne.gameboard, true);
         this.renderBoard('player-two-board-area', this.playerTwo.gameboard, false);
 
-        const footer = document.getElementById('footer');
-        footer.textContent = "Click on the opponent's board to send an attack!"
+        this.footer.textContent = "Click on the opponent's board to send an attack!";
     }
 
     createButton(text, classNames = []) {
@@ -42,15 +41,15 @@ class UIController {
         return button;
     }
 
-    isOutOfBounds(x, y, ship, horizontal) {
-        if (horizontal) {
+    isOutOfBounds(x, y, ship) {
+        if (ship.horizontal) {
             return x < 0 || x + ship.length > 10 || y < 0 || y > 9;
         }
         return x < 0 || x > 9 || y < 0 || y + ship.length > 10;
     }
 
     isPlacementValid(playerGameboard, ship, x, y) {
-        if (this.isOutOfBounds(x, y, ship, ship.horizontal)) return false;
+        if (this.isOutOfBounds(x, y, ship)) return false;
 
         for (let i = 0; i < ship.length; i++) {
             const occupied = ship.horizontal ? playerGameboard[x + i][y] : playerGameboard[x][y + i];
@@ -91,7 +90,7 @@ class UIController {
         gridCell.classList.add('grid-cell');
         gridCell.dataset.row = rowIndex;
         gridCell.dataset.col = colIndex;
-    
+
         if (isPlayer) {
             if (cell instanceof Ship) {
                 gridCell.style.backgroundColor = 'var(--ship-color)';
@@ -103,9 +102,8 @@ class UIController {
     }
 
     handleAttack(x, y, gridCell) {
-        if(!this.firstAttackMade) {
-            const footer = document.getElementById('footer');
-            footer.innerHTML = '';
+        if (!this.firstAttackMade) {
+            this.footer.innerHTML = '';
             this.firstAttackMade = true;
         }
 
@@ -191,22 +189,17 @@ class UIController {
     }
 
     disableAllButtons() {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => button.disabled = true);
+        document.querySelectorAll('button').forEach(button => button.disabled = true);
     }
 
     resetGameBoards() {
-        
         ['player-one-board-area', 'player-two-board-area'].forEach(boardId => {
             const boardArea = document.getElementById(boardId);
-            while (boardArea.firstChild) {
-                boardArea.removeChild(boardArea.firstChild);
-            }
+            boardArea.innerHTML = '';
         });
-    
-        const footer = document.getElementById('footer');
-        footer.innerHTML = '';
-    
+
+        this.footer.innerHTML = '';
+
         this.playerOne = new Player();
         this.playerTwo = new Player();
         this.startGame();
