@@ -5,6 +5,7 @@ class UIController {
     constructor() {
         this.playerOne = new Player();
         this.playerTwo = new Player();
+        this.firstAttackMade = false;
     }
 
     initialize() {
@@ -102,8 +103,12 @@ class UIController {
     }
 
     handleAttack(x, y, gridCell) {
-        const footer = document.getElementById('footer');
-        footer.innerHTML = '';
+        if(!this.firstAttackMade) {
+            const footer = document.getElementById('footer');
+            footer.innerHTML = '';
+            this.firstAttackMade = true;
+        }
+
         if (!gridCell.classList.contains('attacked')) {
             const cell = this.playerTwo.gameboard.gameboard[x][y];
             const color = cell ? this.markHit(cell) : this.markMiss();
@@ -171,15 +176,18 @@ class UIController {
     
         const winnerMessage = document.createElement('div');
         winnerMessage.classList.add('winner-message');
-        winnerMessage.textContent = `${winner === this.playerOne ? 'Player One' : 'Player Two'} Wins!`;
+        winnerMessage.textContent = `${winner === this.playerOne ? 'Player One' : 'Player Two'} Wins! Play again?`;
 
-        const playAgainButton = this.createButton('Play Again', ['play-again-button']);
+        const playAgainButton = document.createElement('button');
+        playAgainButton.style.backgroundImage = `url('./images/checkmark.png')`;
+        playAgainButton.classList.add('play-again-button');
         playAgainButton.addEventListener('click', () => {
             this.resetGameBoards();
         });
     
         footer.appendChild(winnerMessage);
         footer.appendChild(playAgainButton);
+        this.firstAttackMade = false;
     }
 
     disableAllButtons() {

@@ -14,11 +14,11 @@
 * {
     padding: 0px;
     margin: 0px;
+    font-family: "ITC Machine Bold", system-ui;
     letter-spacing: 2px;
 }
 
 body {
-    font-family: "ITC Machine Bold", system-ui;
     background-color: var(--background-color);
     color: white;
 }
@@ -35,7 +35,6 @@ body {
     grid-template: 2fr 8fr 2fr / 1fr ;
     height: 100vh;
     width: 100vw;
-    border: 1px solid red;
 }
 
 #header {
@@ -101,9 +100,26 @@ body {
 
 #footer {
     display: flex;
+    gap: 20px;
     font-size: 2rem;
     justify-content:center;
     align-items: center;
     padding: 20px;
     color: white;
+}
+
+.winner-message {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    min-height: 2rem;
+    min-width: 2rem;
+}
+
+.play-again-button {
+    min-height: 2rem;
+    min-width: 2rem;
+    background-size: cover;
+    border: none;
+    background-color: inherit;
 }
