@@ -28,10 +28,11 @@ module.exports = {
                             name: '[path][name].[ext]',
                             context: 'src',
                             outputPath: 'images',
+                            publicPath: 'images',
                         },
                     },
                 ],
-            },
+            }            
         ],
     },
 }
